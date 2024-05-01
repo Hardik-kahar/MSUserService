@@ -18,7 +18,6 @@ import com.user.service.UserServices;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
 	 
 	@Autowired
 	private UserServices userServices;

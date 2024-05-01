@@ -26,17 +26,20 @@ public class User {
 	@Id
 	@Column(name = "ID")
 	private String id;
-	
+
 	@Column(name = "NAME", length = 50)
 	private String name;
-	
+
 	@Column(name = "EMAIL")
 	private String email;
-	
+
 	@Column(name = "ABOUT")
 	private String about;
-	
+
 	@Transient
-	private List<Rating> rating = new ArrayList<>();
-		
+	private List<Rating> rating;
+	
+//	@Transient
+//	private List<Hotel> hotel;
+
 }
