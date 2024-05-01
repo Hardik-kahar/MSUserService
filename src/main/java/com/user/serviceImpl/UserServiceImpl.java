@@ -17,6 +17,7 @@ import com.user.entities.Hotel;
 import com.user.entities.Rating;
 import com.user.entities.User;
 import com.user.exception.ResourceNotFoundException;
+import com.user.external.services.HotelServices;
 import com.user.repositories.UserRespository;
 import com.user.service.UserServices;
 
@@ -28,6 +29,9 @@ public class UserServiceImpl implements UserServices {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private HotelServices hotelServices;
 
 	private Logger logger = LoggerFactory.getLogger(UserServices.class);
 
@@ -54,8 +58,10 @@ public class UserServiceImpl implements UserServices {
 		List<Rating> ratings = Arrays.stream(ratingOfUser)
 			    .map(rating -> {
 			    	System.out.println("id: "+ rating.getHotelId());
-			        ResponseEntity<Hotel> responseEntity = restTemplate.getForEntity("http://localhost:8082/hotels/" + rating.getHotelId(), Hotel.class);
-			        Hotel hotel = responseEntity.getBody();
+//			        ResponseEntity<Hotel> responseEntity = restTemplate.getForEntity("http://localhost:8082/hotels/" + rating.getHotelId(), Hotel.class);
+//			        Hotel hotel = responseEntity.getBody();
+			    	
+			    	Hotel hotel = hotelServices.getHotel(rating.getHotelId());
 
 			        rating.setHotel(hotel);
 
