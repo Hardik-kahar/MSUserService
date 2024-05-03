@@ -58,10 +58,10 @@ public class UserServiceImpl implements UserServices {
 		List<Rating> ratings = Arrays.stream(ratingOfUser)
 			    .map(rating -> {
 			    	System.out.println("id: "+ rating.getHotelId());
-//			        ResponseEntity<Hotel> responseEntity = restTemplate.getForEntity("http://localhost:8082/hotels/" + rating.getHotelId(), Hotel.class);
-//			        Hotel hotel = responseEntity.getBody();
+			        ResponseEntity<Hotel> responseEntity = restTemplate.getForEntity("http://localhost:8082/hotels/" + rating.getHotelId(), Hotel.class);
+			        Hotel hotel = responseEntity.getBody();
 			    	
-			    	Hotel hotel = hotelServices.getHotel(rating.getHotelId());
+//			    	Hotel hotel = hotelServices.getHotel(rating.getHotelId());
 
 			        rating.setHotel(hotel);
 
