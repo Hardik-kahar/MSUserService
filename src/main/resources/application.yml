@@ -2,6 +2,7 @@ server:
   port: 8081
 
 spring:
+
   datasource:
     url: jdbc:mysql://localhost:3306/microservice
     username: root
@@ -21,13 +22,17 @@ spring:
       enabled: true
   application:
     name: USER-SERVICE
+    
+# common file configuration    
+  config:
+    import: optional:configserver:http://localhost:8085
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url: 
-      defaultZone: http://localhost:8761/eureka
-      
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url: 
+#      defaultZone: http://localhost:8761/eureka
+#      
