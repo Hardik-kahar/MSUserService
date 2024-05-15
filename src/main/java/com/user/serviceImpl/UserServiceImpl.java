@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.user.controller.UserController;
 import com.user.entities.Hotel;
 import com.user.entities.Rating;
 import com.user.entities.User;
@@ -42,7 +43,6 @@ public class UserServiceImpl implements UserServices {
 	@Autowired
     private WebClient.Builder webClientBuilder; 
 	
-//	// Autowire DiscoveryClient
 	@Autowired
 	private DiscoveryClient discoveryClient;
 
