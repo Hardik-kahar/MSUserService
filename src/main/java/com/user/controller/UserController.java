@@ -18,45 +18,52 @@ import com.user.entities.User;
 import com.user.service.UserServices;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-	
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
-	 
+
+	private Logger logger = LoggerFactory.getLogger(UserController.class);
+
 	@Autowired
 	private UserServices userServices;
-	
+
 	@PostMapping
-	public ResponseEntity<User> createUser(@RequestBody User user){
+	public ResponseEntity<User> createUser(@RequestBody User user) {
 		User responseUser = userServices.createUser(user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
 	}
-	
+
 	@GetMapping
-	public ResponseEntity<List<User>> getAllUsers(){
+	public ResponseEntity<List<User>> getAllUsers() {
 		List<User> users = userServices.getAllUser(null);
 		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
-	
+
+	int retryCount = 1;
+
 	@GetMapping("{userId}")
-    @CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback")
-	public ResponseEntity<User> getUserById(@PathVariable String userId ){
-        logger.info("Get Single User Handler: UserController");
+//    @CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback")
+	@Retry(name = "ratingHotelService", fallbackMethod = "ratingHotelFallback")
+	public ResponseEntity<User> getUserById(@PathVariable String userId) {
+		logger.info("Get Singl e User Handler: UserController");
+		logger.info("Retry count: {}", retryCount);
+		retryCount++;
 		User users = userServices.getUserById(userId);
 		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
-	
-	//creating fall back  method for circuitbreaker
-    public ResponseEntity<User> ratingHotelFallback(String userId, Exception ex) {
-        logger.info("Fallback is executed because service is down : ", ex.getMessage());
-        User user = User.builder()
-                .email("dummy@gmail.com")
-                .name("Dummy")
-                .about("This user is created dummy because some service is down")
-                .id("141234")
-                .build();
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
+
+	// creating fall back method for circuitbreaker
+	public ResponseEntity<User> ratingHotelFallback(String userId, Exception ex) {
+		logger.info("Fallback is executed because service is down : ", ex.getMessage());
+		User user = User.builder()
+				.email("dummy@gmail.com")
+				.name("Dummy")
+				.about("This user is created dummy because some service is down")
+				.id("141234")
+				.build();
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
 }

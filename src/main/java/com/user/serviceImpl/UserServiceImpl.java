@@ -36,13 +36,13 @@ public class UserServiceImpl implements UserServices {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 	@Autowired
 	private HotelServices hotelServices;
-	
+
 	@Autowired
-    private WebClient.Builder webClientBuilder; 
-	
+	private WebClient.Builder webClientBuilder;
+
 	@Autowired
 	private DiscoveryClient discoveryClient;
 
@@ -62,13 +62,13 @@ public class UserServiceImpl implements UserServices {
 
 	@Override
 	public User getUserById(String userId) {
-		
+
 		User user = respository.findById(userId).orElseThrow(
 				() -> new ResourceNotFoundException("User with given Id is not found on server! " + userId));
 
 		String otherServicesUrl = "http://localhost:8083";
-	    String hotelServicesUrl = "http://localhost:8082";
-	    
+		String hotelServicesUrl = "http://localhost:8082";
+
 //	    List<ServiceInstance> otherServicesInstances = discoveryClient.getInstances("OTHER-SERVICE");
 //	    List<ServiceInstance> hotelServicesInstances = discoveryClient.getInstances("HOTEL-SERVICE");
 //
@@ -79,28 +79,27 @@ public class UserServiceImpl implements UserServices {
 //	    String otherServicesBaseUrl = otherServicesInstances.get(0).getUri().toString();
 //	    String hotelServicesBaseUrl = hotelServicesInstances.get(0).getUri().toString();
 
-	    
-		Rating[] ratingOfUser = webClientBuilder.baseUrl(otherServicesUrl).build() // Create WebClient instance
-                .get()
-                .uri("/ratings/users/" + userId)
-                .retrieve()
-                .bodyToMono(Rating[].class)
-                .block();
-		
-		List<Rating> ratings = Arrays.stream(ratingOfUser)
-			    .map(rating -> {
-			    	Hotel hotel = webClientBuilder.baseUrl(hotelServicesUrl).build()
-		                .get()
-		                .uri("/hotels/" + rating.getHotelId())
-		                .retrieve()
-		                .bodyToMono(Hotel.class)
-		                .block();
-			    	
-			        rating.setHotel(hotel);
+		Rating[] ratingOfUser = webClientBuilder
+				.baseUrl(otherServicesUrl).build() // Create WebClient instance
+				.get()
+				.uri("/ratings/users/" + userId)
+				.retrieve()
+				.bodyToMono(Rating[].class)
+				.block();
 
-			        return rating;
-			    })
-			    .collect(Collectors.toList());
+		List<Rating> ratings = Arrays.stream(ratingOfUser).map(rating -> {
+			Hotel hotel = webClientBuilder
+					.baseUrl(hotelServicesUrl)
+					.build()
+					.get()
+					.uri("/hotels/" + rating.getHotelId())
+					.retrieve()
+					.bodyToMono(Hotel.class).block();
+
+			rating.setHotel(hotel);
+
+			return rating;
+		}).collect(Collectors.toList());
 
 		user.setRating(ratings);
 //		user.setRating(ratingOfUser);
