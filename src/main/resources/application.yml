@@ -23,7 +23,7 @@ spring:
   application:
     name: USER-SERVICE
     
-# common file configuration    
+# configuration of common configuration file 
   config:
     import: optional:configserver:http://localhost:8085
 
